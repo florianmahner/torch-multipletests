@@ -1,2 +1,2 @@
 # torch_multipletests
-Pytorch version of scipy.stats.multitest.multipletest
+Pytorch version of statsmodels.multitest.multipletest
