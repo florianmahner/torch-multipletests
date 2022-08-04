@@ -3,6 +3,8 @@ try:
 except ImportError:
     from distutils.core import setup, find_packages
 
+requires = ["torch", "torchvision", "numpy"]
+
 setup(
     name='torch_multipletest',
     version='0.0.1',
@@ -11,4 +13,7 @@ setup(
     license='LICENSE',
     long_description=open('README.txt').read(),
     packages=find_packages(),
+    python_requires=">=3.7",
+    install_requires=requires,
+    
 )
