@@ -6,7 +6,7 @@ The current implementation supports correction using Bonferroni and Benjamin Hoc
 
 ## Example Usage:
 
-```
+```python
 import torch
 from torch_multipletests.multitest import multipletest
 
@@ -20,7 +20,3 @@ pvals = torch.distributions.Normal(loc, scale).cdf(cut_off)
 
 fdr_reject, pvals_corrected, alpha_bonferroni_correction = multipletest(pvals, alpha=alpha)
 ```
-
-
-
-
