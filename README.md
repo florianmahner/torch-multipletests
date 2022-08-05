@@ -1,7 +1,8 @@
 ![Python version](https://img.shields.io/badge/python%20-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10-blue)
 ![example workflow](https://github.com/florianmahner/torch_multipletests/actions/workflows/tests.yml/badge.svg)
 ![code style](https://img.shields.io/badge/code%20style-black-black)
-<!-- [![codecov](https://codecov.io/gh/LukasMut/VICE/branch/main/graph/badge.svg?token=gntaL1yrXI)](https://codecov.io/gh/LukasMut/VICE) -->
+[![codecov](https://codecov.io/gh/florianmahner/torch_multipletests/branch/main/graph/badge.svg?token=75FIYZG8BD)](https://codecov.io/gh/florianmahner/torch_multipletests)
+
 
 # `torch_multipletests`
 
