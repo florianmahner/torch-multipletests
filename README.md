@@ -8,7 +8,7 @@
 
 Simple Pytorch implementation of `statsmodels.stats.multitests.multipletests` to control for False-Discovery-Rates and correct p values on GPU for accelerated training and evaluation.
 
-The functionality is currently limited. The implementation right now supports correcting for multiple comparions using Bonferroni (one-step), Benjamini/Hochberg (non-negative) and Benjamini/Yekutieli (negative) methods.
+The functionality is currently limited compared to the original implementation. Right now supported the implementation only supports correcting for multiple comparions using Bonferroni (one-step), Benjamini/Hochberg (non-negative) and Benjamini/Yekutieli (negative) methods. Feel free to contribute.
 
 ## Installation
 
