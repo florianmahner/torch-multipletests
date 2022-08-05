@@ -8,28 +8,27 @@ import torch
 __all__ = ["multipletests"]
 
 
-methods = ['bonferroni', 'fdr_bh', 'fdr_by'] # only works for these right now!
+methods = ["bonferroni", "fdr_bh", "fdr_by"]  # only works for these right now!
 
 
 def _ecdf_torch(x):
-    '''no frills empirical cdf used in fdrcorrection (torch version)
-    '''
+    """no frills empirical cdf used in fdrcorrection (torch version)"""
     nobs = len(x)
-    return torch.arange(1,nobs+1, dtype=torch.float64) /float(nobs)
+    return torch.arange(1, nobs + 1, dtype=torch.float64) / float(nobs)
 
 
 def _check_method(method):
     if method not in methods:
-        raise ValueError('method not recognized, must be one of %s' % method)
+        raise ValueError("method not recognized, must be one of %s" % method)
 
-   
-def multipletests(pvals, alpha=0.05, method='bonferroni', is_sorted=False):
+
+def multipletests(pvals, alpha=0.05, method="bonferroni", is_sorted=False):
     """
     Test results and p-value correction for multiple tests
 
     Ported from https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html
     to Pytorch
-    
+
     Parameters
     ----------
     pvals : array_like, 1-d
@@ -80,20 +79,24 @@ def multipletests(pvals, alpha=0.05, method='bonferroni', is_sorted=False):
     n_permutations = len(pvals)
     alpha_corrected_bonferroni = alpha / float(n_permutations)
 
-    if method in ['bonferroni']:
+    if method in ["bonferroni"]:
         reject = pvals <= alpha_corrected_bonferroni
         pvals_corrected = pvals * float(n_permutations)
 
-    elif method in ['fdr_bh']:
-        reject, pvals_corrected = fdrcorrection_torch(pvals, alpha=alpha, method='indep', is_sorted=is_sorted)
+    elif method in ["fdr_bh"]:
+        reject, pvals_corrected = fdrcorrection_torch(
+            pvals, alpha=alpha, method="indep", is_sorted=is_sorted
+        )
 
-    elif method in ['fdr_by']:
-        reject, pvals_corrected = fdrcorrection_torch(pvals, alpha=alpha, method='n', is_sorted=is_sorted)   
-    
+    elif method in ["fdr_by"]:
+        reject, pvals_corrected = fdrcorrection_torch(
+            pvals, alpha=alpha, method="n", is_sorted=is_sorted
+        )
+
     return reject, pvals_corrected, alpha_corrected_bonferroni
 
 
-def fdrcorrection_torch(pvals, alpha=0.05, method='indep', is_sorted=False):
+def fdrcorrection_torch(pvals, alpha=0.05, method="indep", is_sorted=False):
     """
     Benjamini/Hochberg (1995) False Discovery Rate (FDR) Correction procedure for multiple tests.
     pvals is a vector of p-values.
@@ -114,7 +117,12 @@ def fdrcorrection_torch(pvals, alpha=0.05, method='indep', is_sorted=False):
     See there for full docs and explanations!
     """
 
-    assert method in ['i', 'indep', 'n', 'negcorr'], "method must be one of 'i', 'indep', 'n', 'negcorr'"
+    assert method in [
+        "i",
+        "indep",
+        "n",
+        "negcorr",
+    ], "method must be one of 'i', 'indep', 'n', 'negcorr'"
 
     if not is_sorted:
         pvals_sortind = torch.argsort(pvals)
@@ -123,11 +131,13 @@ def fdrcorrection_torch(pvals, alpha=0.05, method='indep', is_sorted=False):
     else:
         pvals_sorted = pvals
 
-    if method in ['i', 'indep']:
+    if method in ["i", "indep"]:
         ecdf_factor = _ecdf_torch(pvals_sorted)
 
-    elif method in ['n', 'negcorr']:
-        cm = torch.sum(1./ torch.arange(1, len(pvals_sorted) + 1, dtype=torch.float64)) 
+    elif method in ["n", "negcorr"]:
+        cm = torch.sum(
+            1.0 / torch.arange(1, len(pvals_sorted) + 1, dtype=torch.float64)
+        )
         ecdf_factor = _ecdf_torch(pvals_sorted) / cm
 
     reject = pvals_sorted <= ecdf_factor * alpha
@@ -142,8 +152,8 @@ def fdrcorrection_torch(pvals, alpha=0.05, method='indep', is_sorted=False):
     # note torch.flip(a) same as a[::-1]
     pvals_cummin, _ = torch.cummin(torch.flip(pvals_corrected_raw, dims=(0,)), dim=0)
     pvals_corrected = torch.flip(pvals_cummin, dims=(0,))
-    del pvals_corrected_raw    
-    pvals_corrected[pvals_corrected>1] = 1
+    del pvals_corrected_raw
+    pvals_corrected[pvals_corrected > 1] = 1
 
     if not is_sorted:
         pvals_corrected_ = torch.empty_like(pvals_corrected)
@@ -155,4 +165,3 @@ def fdrcorrection_torch(pvals, alpha=0.05, method='indep', is_sorted=False):
 
     else:
         return reject, pvals_corrected
-

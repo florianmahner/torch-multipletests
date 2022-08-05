@@ -1,6 +1,5 @@
 import unittest
 import torch
-import numpy as np
 from torch_multipletests.multitest import multipletests as torch_multipletests
 from statsmodels.stats.multitest import multipletests
 
@@ -9,19 +8,17 @@ def create_synthetic_pvals(n=100):
     """Create pvals based on cdf of gaussian distribution given randomly drawn mean and variances.
     Evaluates whether a certain variable X will be larger or equal than a cut off value.
     """
-    loc = torch.randn(100)
-    scale = torch.randn(100).exp()
-    cut_off = torch.Tensor([0.0])
+    loc, scale = torch.randn(100), torch.randn(100).exp()
+    cut_off = torch.as_tensor(0)
     pvals = torch.distributions.Normal(loc, scale).cdf(cut_off)
 
-    return pvals.double()
+    return pvals
 
 
 class MultipleTestTestCase(unittest.TestCase):
-
     def test_corrections(self):
-    
-        for method in ['bonferroni', 'fdr_bh', 'fdr_by']:
+
+        for method in ["bonferroni", "fdr_bh", "fdr_by"]:
             pvals = create_synthetic_pvals()
 
             fdr_reject, pvals_corrected, alphacBonferroni = torch_multipletests(
@@ -34,7 +31,7 @@ class MultipleTestTestCase(unittest.TestCase):
             fdr_reject_, pvals_corrected_, alphacBonferroni_, _ = multipletests(
                 pvals, alpha=0.05, method=method, is_sorted=False
             )
-            
+
             self.assertTrue(alphacBonferroni, float(alphacBonferroni_))
             self.assertEqual(pvals.shape, pvals_corrected.shape)
             self.assertEqual(pvals_corrected.all(), pvals_corrected_.all())
