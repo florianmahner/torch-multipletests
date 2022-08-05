@@ -4,9 +4,7 @@
 
 import torch
 
-# TODO Maybe put this in __init__.py
 __all__ = ["multipletests"]
-
 
 methods = ["bonferroni", "fdr_bh", "fdr_by"]  # only works for these right now!
 
