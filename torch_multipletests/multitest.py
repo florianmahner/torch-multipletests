@@ -20,49 +20,43 @@ def _check_method(method):
         raise ValueError("method not recognized, must be one of %s" % method)
 
 
-def multipletests(pvals, alpha=0.05, method="bonferroni", is_sorted=False):
-    """
+def multipletests(pvals, alpha=0.05, method="bonferroni", is_sorted=False): 
+    r"""
     Test results and p-value correction for multiple tests
 
     Ported from https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html
     to Pytorch
 
-    Parameters
-    ----------
-    pvals : array_like, 1-d
-        uncorrected p-values.   Must be 1-dimensional.
-    alpha : float
-        FWER, family-wise error rate, e.g. 0.1
-    method : str
-        Method used for testing and adjustment of pvalues. Can be either the
-        full name or initial letters. Available methods are:
+    Args:
+        pvals : torch.Tensor
+                Uncorrected p-values.
+        
+        alpha : float
+                FWER, family-wise error rate, e.g. 0.05
+        
+        method : str
+                Method used for testing and adjustment of pvalues. Can be either the
+                full name or initial letters. Available methods are:
+                - `bonferroni` : one-step correction
+                - `fdr_bh` : Benjamini/Hochberg  (non-negative)
+                - `fdr_by` : Benjamini/Yekutieli (negative)
 
-        - `bonferroni` : one-step correction
-        - `sidak` : one-step correction
-        - `holm-sidak` : step down method using Sidak adjustments
-        - `holm` : step-down method using Bonferroni adjustments
-        - `simes-hochberg` : step-up method  (independent)
-        - `hommel` : closed method based on Simes tests (non-negative)
-        - `fdr_bh` : Benjamini/Hochberg  (non-negative)
-        - `fdr_by` : Benjamini/Yekutieli (negative)
-        - `fdr_tsbh` : two stage fdr correction (non-negative)
-        - `fdr_tsbky` : two stage fdr correction (non-negative)
+        is_sorted : bool
+                If False (default), the p_values will be sorted, but the corrected
+                pvalues are in the original order. If True, then it assumed that the
+                pvalues are already sorted in ascending order.
+                
+     Shape:
+        - pvals: (1,n) or (n,)
 
-    is_sorted : bool
-        If False (default), the p_values will be sorted, but the corrected
-        pvalues are in the original order. If True, then it assumed that the
-        pvalues are already sorted in ascending order.
-
-    Returns
-    -------
-    reject : ndarray, boolean
-        true for hypothesis that can be rejected for given alpha
-    pvals_corrected : ndarray
-        p-values corrected for multiple tests
-
-    alphacBonf : float
-        corrected alpha for Bonferroni method
-    """
+    Returns:
+        reject : ndarray, boolean
+                 true for hypothesis that can be rejected for given alpha
+        pvals_corrected : ndarray
+                          p-values corrected for multiple tests
+        alphacBonf : float
+                     corrected alpha for Bonferroni method
+        """
 
     _check_method(method)
 
@@ -99,17 +93,20 @@ def fdrcorrection_torch(pvals, alpha=0.05, method="indep", is_sorted=False):
     Benjamini/Hochberg (1995) False Discovery Rate (FDR) Correction procedure for multiple tests.
     pvals is a vector of p-values.
     alpha is the desired family-wise alpha level.
-    method : {'i', 'indep', 'p', 'poscorr', 'n', 'negcorr'}, optional
-        Which method to use for FDR correction.
-        ``{'i', 'indep', 'p', 'poscorr'}`` all refer to ``fdr_bh``
-        (Benjamini/Hochberg for independent or positively
-        correlated tests). ``{'n', 'negcorr'}`` both refer to ``fdr_by``
-        (Benjamini/Yekutieli for general or negatively correlated tests).
-        Defaults to ``'indep'``.
-    is_sorted : bool, optional
-        If False (default), the p_values will be sorted, but the corrected
-        pvalues are in the original order. If True, then it assumed that the
-        pvalues are already sorted in ascending order.
+    
+    Args:
+        method : {'i', 'indep', 'p', 'poscorr', 'n', 'negcorr'}, optional
+                Which method to use for FDR correction.
+                ``{'i', 'indep', 'p', 'poscorr'}`` all refer to ``fdr_bh``
+                (Benjamini/Hochberg for independent or positively
+                correlated tests). ``{'n', 'negcorr'}`` both refer to ``fdr_by``
+                (Benjamini/Yekutieli for general or negatively correlated tests).
+                Defaults to ``'indep'``.
+ 
+        is_sorted : bool, optional
+            If False (default), the p_values will be sorted, but the corrected
+            pvalues are in the original order. If True, then it assumed that the
+            pvalues are already sorted in ascending order.
 
     Ported from https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.fdrcorrection.html to Pytorch
     See there for full docs and explanations!
