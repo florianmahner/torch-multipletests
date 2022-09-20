@@ -25,7 +25,7 @@ pip install -e .
 
 ```python
 import torch
-from torch_multipletests.multitest import multipletest
+from torch_multipletests.multitest import multipletests
 
 alpha = 0.05
 method = 'bonferroni' # bonferroni correction 
