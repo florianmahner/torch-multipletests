@@ -15,7 +15,7 @@ The functionality is currently limited compared to the original implementation. 
 Execute the following lines to clone the repository and install the package using pip
 
 ```bash
-git clone git@github.com:florianmahner/torch_multipletests.git
+git clone https://github.com/florianmahner/torch_multipletests.git
 cd torch_multipletests
 pip install -e .
 ```
